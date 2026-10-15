@@ -1,0 +1,49 @@
+BUSCA ATIVA + MODELO DE DRIVER ARM
+=================================
+
+1. COMO O PROJETO EXECUTA AGORA
+-------------------------------
+O modo ativo está selecionado em rtl/control_unit_32.v:
+
+    wire active_mode = 1'b1;
+    wire run_program = 1'b1;
+
+O programa fica em data/game_program.hex. A memória instr_mem_32 é lida pelo
+PC controlado por instruction_fetch_mem. A control_unit_32 recebe a instrução,
+carrega o IR, decodifica e executa até HALT. O caminho FIFO permanece conectado,
+mas não é escolhido enquanto active_mode = 1'b1.
+
+2. ONDE FICA O DRIVER ARM
+-------------------------
+Este arquivo fica em sw/driver_arm_busca_ativa.S, ao lado da documentação.
+Não adicione esse arquivo como fonte Verilog no Quartus. Ele é uma referência
+para o software ARM/Linux que roda no HPS.
+
+3. POR QUE O DRIVER AINDA NÃO É EXECUTÁVEL
+------------------------------------------
+A lógica atual inicia automaticamente (run_program=1) e reinicia o PC pelo
+reset de hardware. Não há registradores mapeados no barramento HPS para o ARM
+controlar start/reset ou ler busy/done da busca ativa. Sem esses registradores,
+não é correto inventar um endereço físico e chamar o código de driver funcional.
+
+O arquivo driver_arm_busca_ativa.S é um modelo/documentação, não um executável.
+Para transformá-lo em software funcional, primeiro será preciso:
+  a) adicionar uma interface Avalon-MM de controle/status no RTL;
+  b) conectá-la ao HPS no Platform Designer;
+  c) atribuir endereços e regenerar o sistema;
+  d) então implementar e compilar o software ARM usando o mapa real.
+
+Isso não impede a busca ativa atual: a FPGA deve buscar as instruções diretamente
+do game_program.hex sem que o ARM as envie pela FIFO.
+
+4. COMO TESTAR A BUSCA ATIVA
+----------------------------
+1. Abra o projeto no Quartus usando o arquivo .qpf incluído.
+2. Confirme que o top-level configurado e os arquivos RTL correspondem à placa.
+3. Execute Analysis & Synthesis e depois a compilação completa.
+4. Programe a DE1-SoC e pressione KEY0 para reiniciar.
+5. Observe VGA e os sinais busy/done, se estiverem disponíveis no top-level.
+
+ATENÇÃO: o ZIP foi preparado com a integração RTL da busca ativa, mas não foi
+possível executar o Quartus nem testar a placa nesta sessão. Portanto, ainda não
+é possível garantir que compile sem erros ou que a VGA funcione fisicamente.

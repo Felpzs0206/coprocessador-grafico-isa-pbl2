@@ -1,0 +1,52 @@
+# ==========================================
+# Quartus Prime & Qsys / Platform Designer
+# ==========================================
+db/
+incremental_db/
+greybox_tmp/
+stamp/
+.qsys_edit/
+hps_isw_handoff/
+soc_system/
+
+# Arquivos de saída e relatórios de síntese/fitting do Quartus
+output_files/*.rpt
+output_files/*.summary
+output_files/*.smsg
+output_files/*.done
+output_files/*.jdi
+output_files/*.pin
+output_files/*.sld
+output_files/*.cdf
+output_files/*.sta.*
+output_files/*.fit.*
+output_files/*.map.*
+output_files/*.asm.*
+output_files/*.flow.*
+
+# Descomente a linha abaixo caso NÃO queira enviar o bitstream compilado (.sof):
+# output_files/*.sof
+
+# Arquivos temporários, dumps e relatórios automáticos
+*.bak
+*.orig
+c5_pin_model_dump.txt
+hps_clock_info.xml
+hps_sdram_p0_all_pins.txt
+hps_sdram_p0_summary.csv
+*.ipregen.rpt
+*.sopcinfo
+
+# Binários e artefatos de compilação C/ARM
+sw/*.o
+sw/*.elf
+sw/menu_gpu
+sw/run_program
+
+# Arquivos de sistema operacional
+Thumbs.db
+.DS_Store
+
+# Documentação / PDFs
+PBL2.pdf
+PBL02.pdf
