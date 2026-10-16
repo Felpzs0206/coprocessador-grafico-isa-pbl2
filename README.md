@@ -41,41 +41,7 @@ Este projeto consiste no desenvolvimento, implementação e validação do núcl
 
 ## 3. Arquitetura Proposta e Justificativa de Decisões
 
-```mermaid
-graph TD
-    subgraph HPS_ARM ["Sistema Processador (ARM HPS)"]
-        ARM["Driver / Aplicação C"] -->|Avalon-MM Lightweight| PIO_CMD["PIO Comando / Status"]
-    end
-
-    subgraph COPROCESSADOR ["Núcleo do Coprocessador Gráfico (50 MHz)"]
-        PIO_CMD -->|32-bit Words| FIFO["FIFO de Comandos (gpu_cmd_fifo)"]
-        FIFO -->|Handshake valid/ready| IFU["Unidade de Busca (IFU / PC)"]
-        IFU -->|load_ir| IR["Registrador de Instrução (IR)"]
-        IR --> DECODER["Decodificador de Instruções"]
-        
-        DECODER -->|Sinais de Controle| FSM["Unidade de Controle (FSM)"]
-        
-        subgraph DATAPATH ["Datapath de Execução"]
-            DECODER -->|Campos Rd, Rs1, Rs2, Func| REG_FILE["Banco de Registradores (32x32)"]
-            REG_FILE -->|Operando A, B| ALU["ULA de 32 bits"]
-            ALU -->|Resultado| REG_FILE
-        end
-
-        FSM -->|Ativação & Coordenadas| RAST["Rasterizador de Polígonos"]
-        FSM -->|Escrita de Atributos| SPR_ENG["Motor de Sprites"]
-        FSM -->|Scroll X/Y & Enable| BG_ENG["Motor de Background"]
-        FSM -->|Prioridade| COMP["Compositor"]
-    end
-
-    subgraph VIDEO ["Subsistema de Exibição (25 MHz)"]
-        RAST -->|Write| FB["Framebuffer Polígonos"]
-        SPR_ENG -->|Pixel Data| COMP
-        BG_ENG -->|Pixel Data| COMP
-        FB -->|Read| COMP
-        COMP --> VGA["Controlador VGA (640x480@60Hz)"]
-        VGA --> DAC["Conector VGA / Monitor"]
-    end
-```
+![Diagrama da Arquitetura do Coprocessador Gráfico](img/Diagrama.svg)
 
 ### 3.1 Justificativa das Decisões de Projeto
 
